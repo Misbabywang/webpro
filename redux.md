@@ -447,4 +447,203 @@ function App() {
 - 实现第二个参数   返回对象  定义属性
 - 在组件内部  通过 this.props 拿到对应的触发 action 的函数对象
 
-##### 接收方步骤
+
+
+
+
+
+
+#### send-love 案例
+
+**App.js**
+
+```javascript
+import React from 'react'
+import Boy from './pages/Boy'
+import Girl from './pages/Girl'
+
+// 导入 store
+import store from './store'
+
+// 导入 provider
+import { Provider } from 'react-redux'
+
+import './App.css'
+
+export const App = () => {
+    return (
+        <>
+            <Provider store={store}>
+                <div className="boy">
+                    <Boy />
+                </div>
+                <div className="girl">
+                    <Girl />
+                </div>
+            </Provider>
+        </>
+    )
+}
+```
+
+
+
+**reducer.js**
+
+```javascript
+// 定义初始化 state 
+const initState = {
+    status: false
+}
+
+exports.loveReducer = (state = initState, action) => {
+
+
+    switch (action.type) {
+        case 'send_love':
+
+            return {
+                status: true
+            }
+
+        case 'stop_love':
+
+            return {
+                status: false
+            }
+
+        default:
+            return state;
+    }
+    
+}
+```
+
+
+
+**store.js**
+
+```javascript
+// 导入 createStore
+import { createStore } from 'redux'
+
+// 导入我们的 reducer
+import { loveReducer } from '../reducer'
+
+
+// 通过 create 创建 store
+export default createStore(loveReducer)
+```
+
+
+
+**Boy.jsx**
+
+```javascript
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+
+import defaultImg from '../../asstes/img/a1.jpg'
+import sendImg from '../../asstes/img/a2.gif'
+
+
+class Boy extends Component {
+
+    // 定义 UI 级别的 state
+    state = {
+        isSend: false
+    }
+
+    handleClcik() {
+
+        const { isSend } = this.state
+
+        // 需要取反  默认 false    点击时渠道的状态是还未更新的状态
+
+        isSend ? this.props.stopLove() : this.props.sendLove()
+
+
+        this.setState({
+            isSend: !isSend
+        })
+    }
+
+    render() {
+
+        const { isSend } = this.state
+
+        return (
+            <>
+                <div>
+                    <img src={isSend ? sendImg : defaultImg} alt="" />
+                    <button onClick={this.handleClcik.bind(this)}>{isSend ? '停止发射' : '发射爱心'}</button>
+                </div>
+            </>
+        )
+    }
+}
+
+
+const mapDispatchToProps = (dispatch) => {
+    // 要有一个返回值  这个对象会返回到组件的内部  通过 this.props 可以拿到
+
+    console.log('boy', dispatch)
+
+    return {
+        sendLove: () => {
+            dispatch({
+                type: 'send_love'
+            })
+        },
+        stopLove: () => {
+            dispatch({
+                type: 'stop_love'
+            })
+        }
+    }
+
+}
+
+// 组件加强并导出
+export default connect(null, mapDispatchToProps)(Boy)
+```
+
+
+
+**Girl.jsx**
+
+```javascript
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+import defaultImg from '../../asstes/img/b1.jpg'
+import reciveImg from '../../asstes/img/b2.jpg'
+
+
+
+class Girl extends Component {
+
+    render() {
+
+        console.log('girl', this.props)
+        return (
+            <>
+                <img src={this.props.status ? reciveImg : defaultImg} alt=""/>
+            </>
+        )
+    }
+}
+
+/**
+ * 
+ * @param {*} state 就是 state 返回过来的状态
+ */
+const mapStateToProps = (state) => {
+
+    return state
+}
+
+export default connect(mapStateToProps)(Girl)
+```
+
