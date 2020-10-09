@@ -371,7 +371,7 @@ this.setState((state, props) => {
 
 
 
-#### this.props.render & this.props.children
+#### render Props
 
 ``` javascript
 class Mouse extends Component {
@@ -647,6 +647,9 @@ REACT_APP_URL=http://fbgj.com
 
 - Hook 是一个特殊的函数
 - 应用场景: 编写函数组件并意识到需要向其添加一些 state  可以在现有的函数组件中使用 Hook
+- 减少代码层级关系
+- 没有生命周期   每个 effect的值单一
+- 代码复用性更高   更简洁
 
 #### useState
 
@@ -748,10 +751,11 @@ class Example extends Component {
 ```javascript
 function Example() {
   const [count, setCount] = useState(0);
+  const [text, setText] = useState('my text');
 
   useEffect(() => {
     document.title = `You clicked ${count} times`;
-  });
+  }, [count]);
 
   return (
     <button onClick={()=>setCount(count+1)}></button>
@@ -971,7 +975,10 @@ function FriendListItem(props) {
 
 
 
-
+- useEffect  是异步的会在每一轮渲染结束之后执行
+- useEffect  每次更新的时候都会先执行一遍 卸载函数 (effect 返回函数)
+- 可以给  useEffect 设置第二参数(数组) ([count, text])  优化性能 当第二参数里面的数据变化时才执行 useEffect
+- 可以通过 设置第二参数为 []   只有组件在 开始加载和卸载时 触发
 
 
 
