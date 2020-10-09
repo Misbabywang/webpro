@@ -369,7 +369,16 @@ this.setState((state, props) => {
 
 #### PureComponent
 
+```javascript
+class SonBox extends PureComponent {
 
+    render() {
+        return (
+            <h1>随机数: {this.props.count}</h1>
+        )
+    }
+}
+```
 
 #### render Props
 
